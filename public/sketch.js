@@ -1,4 +1,5 @@
 var socket;
+var port = process.env.PORT || 3000;
 
 function setup() {
     createCanvas(400,400);
