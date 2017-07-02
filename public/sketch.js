@@ -1,16 +1,18 @@
 var socket;
 var port = process.env.PORT || 3000;
 
+var board;
 var pieces;
-var img; 
+var img;
 
 
 function setup() {
-    createCanvas(400,400);
+    createCanvas(600,400);
     background(50);
     noStroke();
     socket = io.connect(port);
     socket.on('mouse', newDrawing);
+    
     
     pieces = [];
     loadImages();
@@ -18,12 +20,16 @@ function setup() {
 }
 
 function init() {
+    board = new Board(0,0,12,12,32);
+    
     let player = new Unit(32,32,32,48,img.red);
     player.imageOrigin={x:0, y:16};
-    pieces.push(player);
+    player.setAnimation(true,4,4);
+    board.tiles.push(player);
+    
     let player2 = new Unit(256,256,32,48,img.blue);
     player2.imageOrigin={x:0, y:16};
-    pieces.push(player2);
+    board.tiles.push(player2);    
 }
 
 function newDrawing(data) {
@@ -47,32 +53,6 @@ function mouseDragged() {
 }
 
 function draw() {
-    drawBoard(400,400,32);
-    fill(50,150,250,100);
-    rect(floor(mouseX/32)*32,floor(mouseY/32)*32,32,32);
-    drawPieces();
-    
-    
-}
-
-function drawPieces() {
-
-    for (p of pieces) {
-        p.Update();
-        p.setAnimation(true, 4, 4);
-    }
-
-}
-
-function drawBoard(w,h,size) {
-    for (let i = 0; i < w; i+=size) {
-        for (let j = 0; j < h; j+=size) {
-            if ((i + j) % (size*2)) {
-                fill(100,200,100);
-            } else {
-                fill(150,200,100);
-            }
-            rect(i,j,size,size);
-        }
-    }
+    background(51);
+    board.Update();
 }
