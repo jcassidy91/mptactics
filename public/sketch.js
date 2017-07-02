@@ -18,7 +18,12 @@ function setup() {
 }
 
 function init() {
-    pieces.push(new Unit(32,32,32,48,img.red))
+    let player = new Unit(32,32,32,48,img.red);
+    player.imageOrigin={x:0, y:16};
+    pieces.push(player);
+    let player2 = new Unit(256,256,32,48,img.blue);
+    player2.imageOrigin={x:0, y:16};
+    pieces.push(player2);
 }
 
 function newDrawing(data) {
@@ -43,7 +48,11 @@ function mouseDragged() {
 
 function draw() {
     drawBoard(400,400,32);
+    fill(50,150,250,100);
+    rect(floor(mouseX/32)*32,floor(mouseY/32)*32,32,32);
     drawPieces();
+    
+    
 }
 
 function drawPieces() {

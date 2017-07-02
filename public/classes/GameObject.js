@@ -12,6 +12,7 @@ class GameObject {
         this.gravity = 0;
         this.clock = 0;
         this.visible = true;
+        this.imageOrigin = {x:0, y:0};
     }
     
     Update() {
@@ -27,11 +28,14 @@ class GameObject {
     }
     
     drawSelf() {
-        image(this.img, this.position.x, this.position.y,
+        image(this.img,
+              this.position.x-this.imageOrigin.x,
+              this.position.y-this.imageOrigin.y,
               this.size.width, this.size.height,
               this.imageIndex.row*this.size.width,
               this.imageIndex.col*this.size.height,
-              this.size.width, this.size.height);
+              this.size.width, this.size.height
+             );
     }
     
     doPhysics() {
