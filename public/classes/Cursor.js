@@ -1,10 +1,12 @@
 class Cursor {
-    constructor(size,bounds) {
-        this.bounds = bounds;
+    constructor(size, board) {
+        this.board = board;
+        this.bounds = this.board.bounds;
         this.x;
         this.y;
         this.size = size;
         this.Update();
+        this.state = "idle";
     }
     
     Update() {

@@ -6,17 +6,10 @@ class Board {
         this.w = numX*size;
         this.h = numY*size;
         this.tiles = [];
-        this.cursor = new Cursor(size,{min:{x:this.x,
-                                            y:this.y},
-                                       max:{x:this.x +
-                                              this.w -
-                                              this.gridSize,
-                                            y:this.y +
-                                              this.h -
-                                              this.gridSize
-                                           }
-                                      }
-                                );
+        this.bounds = {min:{x:this.x, y:this.y},
+                       max:{x:this.x + this.w - this.gridSize,
+                            y:this.y + this.h - this.gridSize}};
+        this.cursor = new Cursor(size, this);
     }
     
     Draw() {
@@ -39,10 +32,19 @@ class Board {
     }
     
     Update() {
+        this.tiles = this.tiles.filter(t => {return !t.destroy})
         this.Draw();
         
         for(let t of this.tiles) {
             t.Update();
         }
+    }
+
+    cursorObject() {
+        return this.tiles.find(t => {
+            return t.position.x === this.cursor.x &&
+                   t.position.y === this.cursor.y
+            }
+        )
     }
 }

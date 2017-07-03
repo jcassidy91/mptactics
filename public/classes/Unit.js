@@ -1,8 +1,10 @@
 class Unit extends GameObject {
-    constructor(xx,yy,ww,hh,img) {
+    constructor(xx,yy,ww,hh,img,board) {
         super(xx,yy,ww,hh,img);
         this.ended = false;
         this.selected = false;
+        this.grid = null;
+        this.board = board;
     }
     
     Update() {
@@ -19,6 +21,17 @@ class Unit extends GameObject {
                  this.position.y,
                  32,32
                 );
+            this.setAnimation(true, 4, 4);
+            
+            if (this.grid === null) {
+                this.grid = new Grid(this.position.x,   
+                                     this.position.y,
+                                     3,32,this.board);
+            }
+        } else {
+            this.setAnimation(false, 0, 0);
+            this.imageIndex.row = 0;
+            this.grid = null;
         }
         super.drawSelf();
         noTint();

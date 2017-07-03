@@ -13,6 +13,8 @@ class GameObject {
         this.clock = 0;
         this.visible = true;
         this.imageOrigin = {x:0, y:0};
+        this.tag = "default";
+        this.destroy = false;
     }
     
     Update() {
