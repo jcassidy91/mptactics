@@ -22,16 +22,7 @@ class MoveTile extends UIObject{
     }
     
     setPath() {
-        let path = [this.getPosition()];
-        
-        var p = this;
-        
-        do {
-            p = p.parent;
-            path.push(p.getPosition());
-        } while (p.parent !== undefined)
-        
-        this.grid.board.cursor.selectedObj.setPath(path.reverse());
+        this.grid.board.cursor.selectedObj.setPath(this.grid.path);
         this.grid.board.cursor.deselectObj();
     }
     
@@ -59,6 +50,7 @@ class Grid {
         this.steps = steps;
         this.gridSize = size;
         this.board = board;
+        this.path = [];
         this.Init();
     }
     
@@ -71,16 +63,55 @@ class Grid {
             )
         })
         
-        while(m !== undefined) {
-            rect(m.id.x * this.gridSize + this.position.x,
-                m.id.y * this.gridSize + this.position.y,
-                this.gridSize, this.gridSize);
-            m = m.parent;
+        if (m === undefined) {
+            console.log("off path");
+            this.path = [{x: this.position.x, y: this.position.y}];
+        } else if (this.path.length < this.steps+1 &&
+                   (abs(this.path[this.path.length-1].x - 
+                   this.board.cursor.x) +
+                  abs(this.path[this.path.length-1].y - 
+                   this.board.cursor.y) === this.gridSize)
+                   ) {
+            console.log("Next to tile");
+            if (this.path.find(t => 
+                                    (t.x === this.board.cursor.x &&
+                                    t.y === this.board.cursor.y)
+                            ) !== undefined) {
+                    let newPath = [];
+                    let i = 0;
+                    while (this.path[i].x !== this.board.cursor.x ||
+                          this.path[i].y !== this.board.cursor.y) {
+                        newPath.push(this.path[i]);
+                        i++;
+                    }
+                    this.path = newPath;
+                }
+            
+            this.path.push({x: this.board.cursor.x, 
+                            y: this.board.cursor.y});
+        } else if (this.path[this.path.length-1].x !== 
+                   this.board.cursor.x ||
+                    this.path[this.path.length-1].y !== 
+                   this.board.cursor.y) {
+            this.path = [];
+            while(m !== undefined) {
+                this.path.push({x: m.position.x, y:m.position.y});
+                m = m.parent;
+            }
+            this.path.reverse();
+            console.log("repath");
         }
         
+        
+        
+        //GenPath
+        for (let p of this.path) {
+            rect(p.x, p.y, this.gridSize, this.gridSize);
+        }
     }
     
     Init() {
+        this.path.push({x: this.position.x, y: this.position.y});
         var moveTiles = [];
         
         //Create tiles
