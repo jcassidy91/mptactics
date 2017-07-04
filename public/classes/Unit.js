@@ -1,5 +1,5 @@
 class Unit extends GameObject {
-    constructor(xx,yy,ww,hh,img,board,ui) {
+    constructor(xx,yy,ww,hh,img,stats,board,ui) {
         super(xx,yy,ww,hh,img);
         this.ended = false;
         this.selected = false;
@@ -7,6 +7,7 @@ class Unit extends GameObject {
         this.board = board;
         this.prevState;
         this.state = "idle";
+        this.stats = stats;
     }
     
     Update() {
@@ -32,7 +33,8 @@ class Unit extends GameObject {
             if (this.grid === null) {
                 this.grid = new Grid(this.position.x,   
                                      this.position.y,
-                                     3,32,this.board,
+                                     this.stats.speed,
+                                     32,this.board,
                                      this.ui);
             }
         } else {
@@ -46,6 +48,6 @@ class Unit extends GameObject {
     
     setPath(path) {
         this.prevState = {position: this.position};
-        followPath(path);
+        this.startPath(path);
     }
 }

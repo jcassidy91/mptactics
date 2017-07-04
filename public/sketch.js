@@ -30,11 +30,11 @@ function init() {
     board = new Board(0,0,12,12,32,UI);
     cam = {x:0,y:0};
     
-    let player = new Unit(32,32,32,48,img.red,board);
+    let player = new Unit(32,32,32,48,img.red,{speed:8},board);
     player.imageOrigin={x:0, y:16};
     board.tiles.push(player);
     
-    let player2 = new Unit(256,256,32,48,img.blue,board);
+    let player2 = new Unit(256,256,32,48,img.blue,{speed:6},board);
     player2.imageOrigin={x:0, y:16};
     board.tiles.push(player2);   
     
