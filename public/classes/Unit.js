@@ -1,13 +1,19 @@
 class Unit extends GameObject {
-    constructor(xx,yy,ww,hh,img,board) {
+    constructor(xx,yy,ww,hh,img,board,ui) {
         super(xx,yy,ww,hh,img);
         this.ended = false;
         this.selected = false;
         this.grid = null;
         this.board = board;
+        this.prevState;
+        this.state = "idle";
     }
     
     Update() {
+        if (this.grid !== null) {
+            this.grid.drawArrow();
+        }
+        
         super.Update();
     }
     
@@ -26,7 +32,8 @@ class Unit extends GameObject {
             if (this.grid === null) {
                 this.grid = new Grid(this.position.x,   
                                      this.position.y,
-                                     3,32,this.board);
+                                     3,32,this.board,
+                                     this.ui);
             }
         } else {
             this.setAnimation(false, 0, 0);
@@ -35,5 +42,10 @@ class Unit extends GameObject {
         }
         super.drawSelf();
         noTint();
+    }
+    
+    setPath(path) {
+        this.prevState = {position: this.position};
+        followPath(path);
     }
 }

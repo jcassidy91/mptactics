@@ -15,9 +15,13 @@ class GameObject {
         this.imageOrigin = {x:0, y:0};
         this.tag = "default";
         this.destroy = false;
+        this.time = 0;
+        this.pathStart = -1;
     }
     
     Update() {
+        this.time++;
+        
         if (this.physics) {
             this.doPhysics();
         }
@@ -26,6 +30,9 @@ class GameObject {
         }
         if (this.visible) {
             this.drawSelf();
+        }
+        if (pathStart > -1) {
+            followPath(this.path);
         }
     }
     
@@ -42,6 +49,15 @@ class GameObject {
     
     doPhysics() {
         alert("No Physics...")
+    }
+    
+    startPath(path) {
+        this.pathStart = time;
+        this.path = path;
+    }
+    
+    followPath(path) {
+        
     }
     
     animate() {

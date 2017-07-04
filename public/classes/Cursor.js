@@ -7,6 +7,66 @@ class Cursor {
         this.size = size;
         this.Update();
         this.state = "idle";
+        this.booped = false;
+        this.selectedObj = null;
+    }
+    
+    boop() {
+        this.booped = true;
+        setTimeout(() => {this.booped = false}, 100);
+    }
+    
+    click() {
+        switch (this.state) {
+            case "idle":
+                this.selectedObj = this.selectObj();
+                if (this.selectedObj === undefined) {
+                    this.deselectObj();
+                }
+                break;
+            case "moveTile":
+                if (this.selectObj() === undefined) {
+                    this.deselectObj();
+                }
+                break;
+            default:
+                console.log("No click action for cursor state: " + this.state)
+        }
+    }
+    
+    deselectObj() {
+        try {
+                this.selectedObj.selected = false;
+            } catch (e) {};
+        for (let m of this.board.tiles.filter(t => {
+                                            return t.tag === "moveTile"}
+                                        )) {
+            m.destroySelf();
+        }
+        this.selectedObj = null;
+        this.state = "idle";
+    }
+    
+    drawSelf() {
+        if (this.booped) {
+            fill(150,200,255,150);
+        } else {
+            fill(50,150,250,100);
+        }
+        
+        rect(this.x,this.y,this.size,this.size);
+    }
+    
+    selectObj() {
+        var obj;
+        if (obj = this.board.cursorObject()) {
+            try {
+                obj.selected = true;
+                return obj;
+            } catch (e) {};
+        } else {
+            return undefined;
+        }
     }
     
     Update() {
@@ -32,8 +92,4 @@ class Cursor {
         
     }
     
-    drawSelf() {
-        fill(50,150,250,100);
-        rect(this.x,this.y,this.size,this.size);
-    }
 }

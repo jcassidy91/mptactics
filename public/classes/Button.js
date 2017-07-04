@@ -1,13 +1,11 @@
 class Button extends UIObject {
     constructor(xx,yy,ww,hh,func) {
         super(xx,yy,ww,hh)
-        this.x = xx;
-        this.y = yy;
-        this.w = ww;
-        this.h = hh;
         this.func = func;
-        this.myColor = color(200);
-        this.tag = "UI"
+        this.hoverColor = color(225);
+        this.upColor = color(200);
+        this.downColor = color(150);
+        this.tag = "UI";
     }
     
     click() {
@@ -15,7 +13,11 @@ class Button extends UIObject {
     }
     
     drawSelf() {
-        fill(this.myColor);
-        rect(this.x,this.y,this.w,this.h)
+        if (this.visible) {
+            this.down?
+                fill(this.downColor):this.hover?
+                    fill(this.hoverColor):fill(this.upColor);
+            rect(this.position.x,this.position.y,this.w,this.h)
+        }
     }
 }

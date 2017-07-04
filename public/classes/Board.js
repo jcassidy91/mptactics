@@ -1,5 +1,6 @@
 class Board {
-    constructor(xx,yy,numX,numY,size) {
+    constructor(xx,yy,numX,numY,size,ui) {
+        this.ui = ui;
         this.x = xx;
         this.y = yy;
         this.gridSize = size;
@@ -32,7 +33,7 @@ class Board {
     }
     
     Update() {
-        this.tiles = this.tiles.filter(t => {return !t.destroy})
+                this.tiles = this.tiles.filter(t => {return !t.destroy})
         this.Draw();
         
         for(let t of this.tiles) {

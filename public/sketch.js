@@ -1,4 +1,8 @@
+window.addEventListener('mousedown',onMouseDown,false);
+window.addEventListener('mouseup',onMouseUp,false);
+
 var socket;
+//socket.emit('mouse',data);
 var port = process.env.PORT || 3000;
 
 var board;
@@ -15,7 +19,7 @@ function setup() {
     background(50);
     noStroke();
     socket = io.connect(port);
-    socket.on('mouse', newDrawing);
+//    socket.on('mouse', newDrawing);
     
     UI = [];
     loadImages();
@@ -23,7 +27,7 @@ function setup() {
 }
 
 function init() {
-    board = new Board(0,0,12,12,32);
+    board = new Board(0,0,12,12,32,UI);
     cam = {x:0,y:0};
     
     let player = new Unit(32,32,32,48,img.red,board);
@@ -39,58 +43,42 @@ function init() {
     UI.push(button);
 }
 
-function newDrawing(data) {
-    noStroke();
-    fill(0,0,255);
-    ellipse(data.x,data.y,20,20);
-}
-
-function mouseDragged() {
-//    if (mouseButton === RIGHT) {
-//        cam.x -= mouseX - mousePoint.x;
-//        cam.y -= mouseY - mousePoint.y;
-//    }
-    mousePoint = {x:mouseX, y:mouseY};
-    //socket.emit('mouse',data);
-}
-
 function draw() {
+    checkDestroyed();
     background(51);
     translate(-cam.x,-cam.y);
-    board.Update();
-    for (e of UI) {
-        e.drawSelf();
-        e.listenInteract();
-    }
-}
-
-function deselectObj() {
-    try {
-            selectedObj.selected = false;
-        } catch (e) {};
-    for (let m of board.tiles.filter(t => {
-                                        return t.tag === "moveTile"}
-                                    )) {
-        m.destroy = true;
-    }
-    board.cursor.state = "idle";
-}
-
-function mouseClicked() {
     
-    var obj;
-    if (obj = board.cursorObject()) {
-        try {
-            obj.selected = true;
-            selectedObj = obj;
-        } catch (e) {};
-    } else {
-        deselectObj();
+    board.Update();
+    
+    for (u of UI) {
+        u.drawSelf();
+        u.update();
     }
 }
 
-function mousePressed() {
+function checkDestroyed() {
+    UI = UI.filter(t => {return !t.destroy});
+    board.tiles = board.tiles.filter(t => {return !t.destroy})
+    board.ui = UI;
+}
+
+function onMouseDown() {
+    board.cursor.boop();
+    
+    for(u of UI) {
+        u.mouseDown();
+    }
+}
+
+function onMouseUp() {
+    if (mouseButton === LEFT) {
+        board.cursor.click();
+    }
     if (mouseButton === RIGHT) {
-        deselectObj();
+        board.cursor.deselectObj();
+    }
+    
+    for(u of UI) {
+        u.mouseUp();
     }
 }
