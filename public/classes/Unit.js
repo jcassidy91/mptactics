@@ -1,5 +1,5 @@
 class Unit extends GameObject {
-    constructor(xx,yy,ww,hh,img,stats,board,ui) {
+    constructor(xx,yy,ww,hh,img,stats,board) {
         super(xx,yy,ww,hh,img);
         this.ended = false;
         this.selected = false;
@@ -16,6 +16,14 @@ class Unit extends GameObject {
         }
         
         super.Update();
+    }
+    
+    cancel() {
+        this.selected = false;
+        this.grid = null;
+        this.position.x = this.prevState.position.x;
+        this.position.y = this.prevState.position.y;
+        //this.pathStart = -1;
     }
     
     drawSelf() {
@@ -46,8 +54,10 @@ class Unit extends GameObject {
         noTint();
     }
     
-    setPath(path) {
-        this.prevState = {position: this.position};
-        this.startPath(path);
+    setPath(path,callback) {
+        this.prevState = {position: {x:this.position.x, 
+                                     y:this.position.y}
+                         };
+        this.startPath(path,callback);
     }
 }

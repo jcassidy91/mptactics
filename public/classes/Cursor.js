@@ -9,6 +9,11 @@ class Cursor {
         this.state = "idle";
         this.booped = false;
         this.selectedObj = null;
+        this.menu = null;
+    }
+    
+    actionMenu() {
+        this.menu = new Menu(this.selectedObj.position.x+this.board.gridSize, this.selectedObj.position.y, ["pokemon", "item", "end"], this.selectedObj);
     }
     
     boop() {
@@ -28,6 +33,10 @@ class Cursor {
                 if (this.selectObj() === undefined) {
                     this.deselectObj();
                 }
+                break;
+            case "wait":
+                break;
+            case "action menu":
                 break;
             default:
                 console.log("No click action for cursor state: " + this.state)
@@ -61,8 +70,12 @@ class Cursor {
         var obj;
         if (obj = this.board.cursorObject()) {
             try {
-                obj.selected = true;
-                return obj;
+                if (!obj.ended) {
+                    obj.selected = true;
+                    return obj;
+                } else {
+                    return undefined;
+                }
             } catch (e) {};
         } else {
             return undefined;
@@ -86,8 +99,12 @@ class Cursor {
             mouseY > this.bounds.max.y + this.size) {
             cursor();
         } else {
-            noCursor();
-            this.drawSelf();
+            if (this.state === "idle" || this.state === "moveTile") {
+                noCursor();
+                this.drawSelf();
+            } else {
+                cursor();
+            }
         }
         
     }

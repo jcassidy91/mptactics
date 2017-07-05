@@ -10,7 +10,7 @@ class MoveTile extends UIObject{
     }
     
     init() {
-        this.button = new Button(this.position.x,this.position.y,this.size,this.size,
+        this.button = new Button(this.position.x,this.position.y,this.size,this.size, "",
                                  () => {this.setPath()}
               )
         this.button.visible = false;
@@ -22,8 +22,18 @@ class MoveTile extends UIObject{
     }
     
     setPath() {
-        this.grid.board.cursor.selectedObj.setPath(this.grid.path);
+        this.grid.board.cursor.selectedObj.setPath(this.grid.path, this.actionMenu.bind(this));
+        let unit = this.grid.board.cursor.selectedObj;
         this.grid.board.cursor.deselectObj();
+        this.grid.board.cursor.selectedObj = unit;
+        //setTimeout(this.grid.board.cursor.actionMenu.bind(this.grid.board.cursor), 1000);
+        this.grid.board.cursor.state = "wait";
+        //setTimeout(() => {this.grid.board.cursor.state = "action menu"},1000);
+    }
+    
+    actionMenu() {
+        this.grid.board.cursor.actionMenu();
+        this.grid.board.cursor.state = "action menu";
     }
     
     Update() {
@@ -38,8 +48,8 @@ class MoveTile extends UIObject{
     }
     
     drawSelf() {
-        //fill(150,200,250,100+50*sin(millis()*1000/TWO_PI));
-        fill(150,200,250,100);
+        fill(150,200,250,100+50*sin(millis()/1000/TWO_PI));
+        //fill(150,200,250,100);
         rect(this.position.x,this.position.y,this.size,this.size);
     }
 }
@@ -55,7 +65,8 @@ class Grid {
     }
     
     drawArrow() {
-        fill(255,100,100,100);
+        
+        //Find moveTile under cursor (or undefined)
         let m = this.board.tiles.find(e => {
             return (e.id !== undefined &&
                 e.id.x * this.gridSize + this.position.x === this.board.cursor.x &&
@@ -64,7 +75,7 @@ class Grid {
         })
         
         if (m === undefined) {
-            console.log("off path");
+            //Off Grid
             this.path = [{x: this.position.x, y: this.position.y}];
         } else if (this.path.length < this.steps+1 &&
                    (abs(this.path[this.path.length-1].x - 
@@ -72,11 +83,11 @@ class Grid {
                   abs(this.path[this.path.length-1].y - 
                    this.board.cursor.y) === this.gridSize)
                    ) {
-            console.log("Next to tile");
             if (this.path.find(t => 
                                     (t.x === this.board.cursor.x &&
                                     t.y === this.board.cursor.y)
                             ) !== undefined) {
+                //Visiting duplicate square
                     let newPath = [];
                     let i = 0;
                     while (this.path[i].x !== this.board.cursor.x ||
@@ -93,18 +104,17 @@ class Grid {
                    this.board.cursor.x ||
                     this.path[this.path.length-1].y !== 
                    this.board.cursor.y) {
+            //Generate Path
             this.path = [];
             while(m !== undefined) {
                 this.path.push({x: m.position.x, y:m.position.y});
                 m = m.parent;
             }
             this.path.reverse();
-            console.log("repath");
         }
-        
-        
-        
-        //GenPath
+
+        //Draw Path
+        fill(255,100,100,100);
         for (let p of this.path) {
             rect(p.x, p.y, this.gridSize, this.gridSize);
         }

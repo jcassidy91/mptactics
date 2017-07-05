@@ -54,9 +54,9 @@ class GameObject {
     }
     
     followPath(path) {
-        let totalTime = 90;
-        let totalDist = this.distance(this.position.x,
-                                 this.position.y,
+        let totalTime = 60;
+        let totalDist = this.distance(this.prevState.position.x,
+                                 this.prevState.position.y,
                                 path[0].x,
                                 path[0].y)
         for (let d = 0; d < path.length - 1; d++) {
@@ -65,6 +65,7 @@ class GameObject {
                                 path[d+1].x,
                                 path[d+1].y);
         };
+        console.log(totalDist)
         
         let elapsedTime = this.time - this.pathStart;
         let percent = elapsedTime/totalTime;
@@ -88,8 +89,8 @@ class GameObject {
         let distFromNode = d - currentDist;
         
         if (distFromNode === 0) {
-            this.position.x = path[i].x;
-            this.position.y = path[i].y;
+            this.position.x = path[i+1].x;
+            this.position.y = path[i+1].y;
         } else {
             this.position.x = path[i+1].x - 
                                 this.orthoDirection(path[i].x,
@@ -104,6 +105,14 @@ class GameObject {
                                                    path[i+1].y).y *
                                 distFromNode;
         }
+        
+        if (percent >= 1 || totalDist === 0) {
+            if (this.pathCallback !== null) {
+                this.pathCallback();
+            }
+            this.pathCallback = null;
+            this.pathStart = -1;
+        }        
     }
     
     orthoDirection(x1,y1,x2,y2) {        
@@ -124,9 +133,10 @@ class GameObject {
         this.imageSpeed = speed;
     }
     
-    startPath(path) {
+    startPath(path, callback) {
         this.pathStart = this.time;
         this.path = path;
+        this.pathCallback = callback;
     }
     
     Update() {
