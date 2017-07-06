@@ -1,5 +1,6 @@
 class Board {
     constructor(xx,yy,numX,numY,size,ui) {
+        this.socket = socket;
         this.ui = ui;
         this.x = xx;
         this.y = yy;
@@ -11,6 +12,8 @@ class Board {
                        max:{x:this.x + this.w - this.gridSize,
                             y:this.y + this.h - this.gridSize}};
         this.cursor = new Cursor(size, this);
+        
+        
     }
     
     Draw() {
@@ -39,6 +42,8 @@ class Board {
         for(let t of this.tiles) {
             t.Update();
         }
+        
+        //this.socket.on('move', () => {console.log("hi")})
     }
 
     cursorObject() {

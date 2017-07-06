@@ -54,7 +54,7 @@ class GameObject {
     }
     
     followPath(path) {
-        let totalTime = 60;
+        let totalTime = 30;
         let totalDist = this.distance(this.prevState.position.x,
                                  this.prevState.position.y,
                                 path[0].x,
@@ -65,7 +65,6 @@ class GameObject {
                                 path[d+1].x,
                                 path[d+1].y);
         };
-        console.log(totalDist)
         
         let elapsedTime = this.time - this.pathStart;
         let percent = elapsedTime/totalTime;
@@ -107,9 +106,9 @@ class GameObject {
         }
         
         if (percent >= 1 || totalDist === 0) {
-            if (this.pathCallback !== null) {
+            try {
                 this.pathCallback();
-            }
+            } catch(e) {};
             this.pathCallback = null;
             this.pathStart = -1;
         }        

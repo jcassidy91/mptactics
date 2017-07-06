@@ -19,15 +19,26 @@ function setup() {
     background(50);
     noStroke();
     socket = io.connect(port);
-//    socket.on('mouse', newDrawing);
+    socket.on('move', moveUnit);
     
     UI = [];
     loadImages();
     setTimeout(init(),500);
 }
 
+function moveUnit(data) {
+    let unit = board.tiles.find(u => {
+        return (u.position.x === data.sx &&
+            u.position.y === data.sy)
+    })
+                
+//    unit.position.x = data.x;
+//    unit.position.y = data.y;
+    unit.setPath(data.path)
+}
+
 function init() {
-    board = new Board(0,0,12,12,32,UI);
+    board = new Board(0,0,12,12,32,UI,socket);
     cam = {x:0,y:0};
     
     let player = new Unit(32,32,32,48,img.red,{speed:8},board);
@@ -44,6 +55,7 @@ function init() {
 }
 
 function draw() {
+    
     checkDestroyed();
     background(51);
     translate(-cam.x,-cam.y);

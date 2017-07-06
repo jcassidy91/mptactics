@@ -32,7 +32,7 @@ class Menu {
     do(func, instance) {
         switch(func) {
             case "end":
-                instance.unit.ended = true;
+                instance.unit.endTurn();
                 break;
             default:
                 console.log("menu default");

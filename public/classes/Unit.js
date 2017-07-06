@@ -54,6 +54,19 @@ class Unit extends GameObject {
         noTint();
     }
     
+    endTurn() {
+        this.ended = true;
+        var data = {
+            sx: this.prevState.position.x,
+            sy: this.prevState.position.y,
+            x: this.position.x,
+            y: this.position.y,
+            path: this.path
+        }
+        console.log(this.path)
+        this.board.socket.emit('move', data);
+    }
+    
     setPath(path,callback) {
         this.prevState = {position: {x:this.position.x, 
                                      y:this.position.y}

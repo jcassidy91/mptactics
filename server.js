@@ -14,10 +14,15 @@ io.sockets.on('connection', newConnection);
 
 function newConnection(socket) {
     console.log(socket.id);
-    
+    socket.on('move', moveMsg);
     socket.on('mouse', mouseMsg);
+    
     
     function mouseMsg(data) {
         socket.broadcast.emit('mouse',data);
+    }
+    
+    function moveMsg(data) {
+        socket.broadcast.emit('move',data);
     }
 }
