@@ -14,6 +14,7 @@ class Cursor {
     
     actionMenu() {
         this.menu = new Menu(this.selectedObj.position.x+this.board.gridSize, this.selectedObj.position.y, ["pokemon", "item", "end"], this.selectedObj);
+        this.state = "action menu";
     }
     
     boop() {

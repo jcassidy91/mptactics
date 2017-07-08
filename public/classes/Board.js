@@ -12,10 +12,51 @@ class Board {
                        max:{x:this.x + this.w - this.gridSize,
                             y:this.y + this.h - this.gridSize}};
         this.cursor = new Cursor(size, this);
-        
+        this.commandBuffer = [];
+        this.state = "idle";
+
+        //this.socket.on('move', this.addCommand.bind(this));
+        this.socket.on('move', this.addCommand.bind(this));
         
     }
+
+    addCommand(data) {
+        this.commandBuffer.push(data);
+    }
     
+    moveUnit(data) {
+        this.state = "moving";
+        let unit = this.tiles.find(u => {
+            return (u.position.x === data.sx &&
+                u.position.y === data.sy)
+        })
+
+        try{ 
+            unit.setPath(data.path, () => {
+                this.state="idle";
+                this.commandBuffer.splice(0,1);
+                this.nextCommand.bind(this);
+            }) 
+        } catch(e) {
+            alert("desync error has occured");
+        }
+    }
+
+    nextCommand() {
+        console.log("next command");
+        const command = this.commandBuffer[0];
+
+        switch (command.type) {
+            case "move":
+                this.moveUnit(command);
+                break;
+            default:
+                console.log("next command failed: ");
+                console.log(command);
+                break;
+        }
+    }
+
     Draw() {
         for (let i = 0; i < this.w; i+=this.gridSize) {
             for (let j = 0; j < this.h; j+=this.gridSize) {
@@ -42,8 +83,12 @@ class Board {
         for(let t of this.tiles) {
             t.Update();
         }
-        
-        //this.socket.on('move', () => {console.log("hi")})
+
+        if (this.state === "idle") {
+            if (this.commandBuffer.length > 0) {
+                this.nextCommand();
+            }
+        }
     }
 
     cursorObject() {

@@ -48,7 +48,6 @@ class Menu {
         this.destroy = true;
         this.unit.board.cursor.state = "idle";
         window.removeEventListener("mousedown",this.click,true);
-        console.log(this)
     }
 }
 

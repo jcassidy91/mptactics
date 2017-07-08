@@ -57,13 +57,13 @@ class Unit extends GameObject {
     endTurn() {
         this.ended = true;
         var data = {
+            type: "move",
             sx: this.prevState.position.x,
             sy: this.prevState.position.y,
             x: this.position.x,
             y: this.position.y,
             path: this.path
         }
-        console.log(this.path)
         this.board.socket.emit('move', data);
     }
     
@@ -72,5 +72,9 @@ class Unit extends GameObject {
                                      y:this.position.y}
                          };
         this.startPath(path,callback);
+    }    
+
+    actionMenu() {
+        this.board.cursor.actionMenu();
     }
 }

@@ -10,9 +10,11 @@ class MoveTile extends UIObject{
     }
     
     init() {
-        this.button = new Button(this.position.x,this.position.y,this.size,this.size, "",
+        this.button = new Button(this.position.x,this.position.y,
+                                 this.size,this.size,
+                                 "",
                                  () => {this.setPath()}
-              )
+                                )
         this.button.visible = false;
         this.grid.board.ui.push(this.button);
     }
@@ -22,18 +24,13 @@ class MoveTile extends UIObject{
     }
     
     setPath() {
-        this.grid.board.cursor.selectedObj.setPath(this.grid.path, this.actionMenu.bind(this));
+        const selectedObj = this.grid.board.cursor.selectedObj;
+        selectedObj.setPath(this.grid.path,
+                            selectedObj.actionMenu.bind(selectedObj));
         let unit = this.grid.board.cursor.selectedObj;
         this.grid.board.cursor.deselectObj();
         this.grid.board.cursor.selectedObj = unit;
-        //setTimeout(this.grid.board.cursor.actionMenu.bind(this.grid.board.cursor), 1000);
         this.grid.board.cursor.state = "wait";
-        //setTimeout(() => {this.grid.board.cursor.state = "action menu"},1000);
-    }
-    
-    actionMenu() {
-        this.grid.board.cursor.actionMenu();
-        this.grid.board.cursor.state = "action menu";
     }
     
     Update() {

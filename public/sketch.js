@@ -19,23 +19,23 @@ function setup() {
     background(50);
     noStroke();
     socket = io.connect(port);
-    socket.on('move', moveUnit);
+    //socket.on('move', moveUnit);
     
     UI = [];
     loadImages();
     setTimeout(init(),500);
 }
 
-function moveUnit(data) {
-    let unit = board.tiles.find(u => {
-        return (u.position.x === data.sx &&
-            u.position.y === data.sy)
-    })
+// function moveUnit(data) {
+//     let unit = board.tiles.find(u => {
+//         return (u.position.x === data.sx &&
+//             u.position.y === data.sy)
+//     })
                 
-//    unit.position.x = data.x;
-//    unit.position.y = data.y;
-    unit.setPath(data.path)
-}
+// //    unit.position.x = data.x;
+// //    unit.position.y = data.y;
+//     unit.setPath(data.path)
+// }
 
 function init() {
     board = new Board(0,0,12,12,32,UI,socket);
