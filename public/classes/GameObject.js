@@ -113,6 +113,24 @@ class GameObject {
             this.pathStart = -1;
         }        
     }
+
+    moveTowardsPoint(x,y,speed,callback) {
+        let w = x - this.position.x;
+        let h = y - this.position.y;
+        let r = this.distance(this.position.x,this.position.y,x,y);
+        
+        let angle = Math.atan2(h, w);
+
+        if (r > speed) {
+            this.position.x += speed * cos(angle);
+            this.position.y += speed * sin(angle);
+        } else {
+            this.position.x = x;
+            this.position.y = y;
+            callback();
+        }
+        
+    }
     
     orthoDirection(x1,y1,x2,y2) {        
         if (x1 === x2) {

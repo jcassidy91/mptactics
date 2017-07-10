@@ -24,7 +24,7 @@ class Board {
         this.commandBuffer.push(data);
     }
     
-    moveUnit(data) {
+    cmdMoveUnit(data) {
         this.state = "moving";
         let unit = this.tiles.find(u => {
             return (u.position.x === data.sx &&
@@ -34,7 +34,6 @@ class Board {
         try{ 
             unit.setPath(data.path, () => {
                 this.state="idle";
-                this.commandBuffer.splice(0,1);
                 this.nextCommand.bind(this);
             }) 
         } catch(e) {
@@ -42,19 +41,50 @@ class Board {
         }
     }
 
+    cmdEnd(data) {
+        let unit = this.tiles.find(u => {
+            return (u.position.x === data.x &&
+                u.position.y === data.y)
+        })
+
+        try{ 
+            unit.ended = true; 
+        } catch(e) {
+            alert("desync error has occured");
+        }
+    }
+
+    cmdPokeball(data) {
+        try{ 
+            let p = new Pokeball(data.startPos,
+                                data.endPos,
+                                data.pokemon,
+                                this);
+                    this.tiles.push(p);
+        } catch(e) {
+            alert("desync error has occured");
+        }
+    }
+
     nextCommand() {
-        console.log("next command");
         const command = this.commandBuffer[0];
 
         switch (command.type) {
             case "move":
-                this.moveUnit(command);
+                this.cmdMoveUnit(command);
+                break;
+            case "end":
+                this.cmdEnd(command);
+                break;
+            case "pokeball":
+                this.cmdPokeball(command);
                 break;
             default:
                 console.log("next command failed: ");
                 console.log(command);
                 break;
         }
+        this.commandBuffer.splice(0,1);
     }
 
     Draw() {

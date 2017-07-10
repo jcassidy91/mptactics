@@ -8,10 +8,11 @@ class Unit extends GameObject {
         this.prevState;
         this.state = "idle";
         this.stats = stats;
+        this.turnData =[];
     }
     
     Update() {
-        if (this.grid !== null) {
+        if (this.grid !== null && !this.grid.destroy && this.grid.type === "move") {
             this.grid.drawArrow();
         }
         
@@ -21,9 +22,20 @@ class Unit extends GameObject {
     cancel() {
         this.selected = false;
         this.grid = null;
-        this.position.x = this.prevState.position.x;
-        this.position.y = this.prevState.position.y;
-        //this.pathStart = -1;
+
+        if (!this.ended) {
+            this.position.x = this.prevState.position.x;
+            this.position.y = this.prevState.position.y;
+        }
+    }
+
+    createMoveGrid() {
+        this.turnData = [];
+        this.grid = new Grid("move", this.position.x,   
+                                 this.position.y,
+                                 this.stats.speed,
+                                 32,this.board,
+                                 this.ui);
     }
     
     drawSelf() {
@@ -37,14 +49,6 @@ class Unit extends GameObject {
                  32,32
                 );
             this.setAnimation(true, 4, 4);
-            
-            if (this.grid === null) {
-                this.grid = new Grid(this.position.x,   
-                                     this.position.y,
-                                     this.stats.speed,
-                                     32,this.board,
-                                     this.ui);
-            }
         } else {
             this.setAnimation(false, 0, 0);
             this.imageIndex.row = 0;
@@ -55,16 +59,25 @@ class Unit extends GameObject {
     }
     
     endTurn() {
+        this.turnData.push(
+            {
+                type: "end",
+                x: this.position.x,
+                y: this.position.y
+            }
+        )
         this.ended = true;
-        var data = {
-            type: "move",
-            sx: this.prevState.position.x,
-            sy: this.prevState.position.y,
-            x: this.position.x,
-            y: this.position.y,
-            path: this.path
+        this.board.cursor.deselectObj();
+
+        try { 
+            this.grid.destroySelf();
+            this.grid = null;
+        } catch (e) {}
+
+        for (let cmd of this.turnData) {
+            this.board.socket.emit('move', cmd);
         }
-        this.board.socket.emit('move', data);
+        this.turnData = [];
     }
     
     setPath(path,callback) {
@@ -75,6 +88,16 @@ class Unit extends GameObject {
     }    
 
     actionMenu() {
+        this.turnData.push(
+            {
+                type: "move",
+                sx: this.prevState.position.x,
+                sy: this.prevState.position.y,
+                x: this.position.x,
+                y: this.position.y,
+                path: this.path
+            }
+        )
         this.board.cursor.actionMenu();
     }
 }

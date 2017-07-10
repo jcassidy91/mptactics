@@ -2,7 +2,6 @@ window.addEventListener('mousedown',onMouseDown,false);
 window.addEventListener('mouseup',onMouseUp,false);
 
 var socket;
-//socket.emit('mouse',data);
 var port = process.env.PORT || 3000;
 
 var board;
@@ -19,23 +18,11 @@ function setup() {
     background(50);
     noStroke();
     socket = io.connect(port);
-    //socket.on('move', moveUnit);
     
     UI = [];
     loadImages();
     setTimeout(init(),500);
 }
-
-// function moveUnit(data) {
-//     let unit = board.tiles.find(u => {
-//         return (u.position.x === data.sx &&
-//             u.position.y === data.sy)
-//     })
-                
-// //    unit.position.x = data.x;
-// //    unit.position.y = data.y;
-//     unit.setPath(data.path)
-// }
 
 function init() {
     board = new Board(0,0,12,12,32,UI,socket);

@@ -25,12 +25,21 @@ class Cursor {
     click() {
         switch (this.state) {
             case "idle":
+                this.state = "moveTile";
                 this.selectedObj = this.selectObj();
                 if (this.selectedObj === undefined) {
                     this.deselectObj();
+                } else {
+                    this.selectedObj.selected = true;
+                    this.selectedObj.createMoveGrid();
                 }
                 break;
             case "moveTile":
+                if (this.selectObj() === undefined) {
+                    this.deselectObj();
+                }
+                break;
+            case "attackTile":
                 if (this.selectObj() === undefined) {
                     this.deselectObj();
                 }
@@ -45,11 +54,14 @@ class Cursor {
     }
     
     deselectObj() {
+
         try {
-                this.selectedObj.selected = false;
+                this.selectedObj.cancel();
             } catch (e) {};
         for (let m of this.board.tiles.filter(t => {
-                                            return t.tag === "moveTile"}
+                                            return (t.tag === "moveTile" ||
+                                                    t.tag === "attackTile")
+                                            }
                                         )) {
             m.destroySelf();
         }
@@ -72,7 +84,6 @@ class Cursor {
         if (obj = this.board.cursorObject()) {
             try {
                 if (!obj.ended) {
-                    obj.selected = true;
                     return obj;
                 } else {
                     return undefined;

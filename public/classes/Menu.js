@@ -34,6 +34,17 @@ class Menu {
             case "end":
                 instance.unit.endTurn();
                 break;
+            case "pokemon":
+                let u = instance.unit;
+                u.grid = new Grid("pokeball",
+                                     u.position.x,   
+                                     u.position.y,
+                                     3,
+                                     32,
+                                     u.board,
+                                     u.ui);
+                u.grid.params = {unit: this.unit};
+                break;
             default:
                 console.log("menu default");
                 break;
@@ -58,9 +69,7 @@ var click = function() {
             check = true;
         }
     }
-    if (check) {
-
-    } else {
+    if (!check) {
         this.unit.board.cursor.state = "idle";
         this.unit.cancel();
         this.destroySelf();

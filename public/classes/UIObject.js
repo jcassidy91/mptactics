@@ -14,10 +14,10 @@ class UIObject {
     }
     
     checkHover() {
-        return (mouseX > this.position.x &&
-                mouseX < this.position.x + this.w &&
-                mouseY > this.position.y &&
-                mouseY < this.position.y + this.h
+        return (mouseX >= this.position.x &&
+                mouseX <= this.position.x + this.w &&
+                mouseY >= this.position.y &&
+                mouseY <= this.position.y + this.h
                )
     }
     
